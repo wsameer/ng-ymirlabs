@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 // import { GoogleVisionService } from 'src/app/shared/google-vision.service';
 import { ImgurService } from 'src/app/shared/imgur.service';
+import { YmirStorageService } from 'src/app/shared/ymir-storage.service';
 
-class ImageSnippet {
-  pending: boolean = false;
-  status: string = 'init';
-
-  constructor(public src: string | ArrayBuffer, public file: File) { }
+export interface SelectedFile {
+  filename: string;
+  path: string | ArrayBuffer;
+  size: number;
+  data: string;
 }
 
 @Component({
@@ -16,20 +17,29 @@ class ImageSnippet {
 })
 export class ImageUploadComponent implements OnInit {
 
-  selectedFile: ImageSnippet;
+  private base64textString: string;
+  selectedFile: SelectedFile;
 
   constructor(
+    private ymirStorageService: YmirStorageService,
     private imgurService: ImgurService
-  ) { }
+  ) {
+    this.selectedFile = {
+      filename: null,
+      path: null,
+      size: 0,
+      data: null
+    };
+  }
 
   ngOnInit() { }
 
-  private base64textString = '';
-
   onSelectFile(event: any) {
     if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
       const reader = new FileReader();
+      const file = event.target.files[0];
+      this.selectedFile.filename = file.name;
+      this.selectedFile.size = file.size;
 
       // check if file size is under limit
       if (!this.validateFileSize(file.size)) {
@@ -44,43 +54,62 @@ export class ImageUploadComponent implements OnInit {
       }
 
       // read file as data url
-      // reader.readAsDataURL(file);
-      reader.readAsBinaryString(file);
+      reader.readAsDataURL(file);
 
       // called once readAsDataURL is completed
       reader.onload = (evt: any) => {
-        if (evt.target) {
-          this.selectedFile = new ImageSnippet(evt.target.result, file);
-          this.base64textString = btoa(evt.target.result);
-          console.log(this.selectedFile);
-        }
+        // here it should be an CDN URL
+        this.selectedFile.path = evt.target.result;
+        this.base64textString = btoa(evt.target.result);
+
+        // this.uploadImageToImgur()
+        this.addImageEntryToDatabase();
       }
     }
   }
 
-  uploadImageToImgur() {
-    this.imgurService.uploadNewImage(this.base64textString).subscribe(response => console.log(response));
-  }
+  /**
+   * Adds the entry of the selected file to database
+   */
+  addImageEntryToDatabase() {
+    const currentTimeStamp = new Date().getTime();
+    const newFileName = `${currentTimeStamp}-${this.selectedFile.filename}`;
+    const params = {
+      filename: newFileName,
+      path: this.selectedFile.path,
+      data: 'Lorem Ipsum Dolar Sit Emet Brngas Der Kpels Altraa Bingduss'
+    };
 
+    this.ymirStorageService
+      .addNewImage(params)
+      .subscribe((response: any) => {
+        if (response) {
+          this.selectedFile.data = response.data.data;
+        }
+      });
+  }
 
   /**
-   * Sends the uploaded file to Google Vision API and checks for the response
-   * @param fileData The upload file
+   * Sends the user selected image to Imgur API for storage
    */
-  readTextOnImage(fileData) {
-    // return this.googleVisionService.uploadImage(this.selectedFile.file)
-    // .subscribe(
-    //   (res) => {
-    //     this.onSuccess();
-    //   },
-    //   (err) => {
-    //     this.onError();
-    //   });
+  // uploadImageToImgur() {
+  //   this.imgurService
+  //     .uploadNewImage(this.base64textString)
+  //     .subscribe((response: any) => {
+  //       console.log(response);
+  //       if (response) {
+  //         console.log(response.data.link);
+  //       }
+  //     });
+  // }
 
-  }
-
+  /**
+   * Validates the size of the updated file
+   * If the size is more than 5MB then an error is thrown
+   * @param fileSize The size of the uploaded file
+   */
   validateFileSize(fileSize: number) {
-    return fileSize < 5000000;
+    return fileSize < 2000000;
   }
 
   /**

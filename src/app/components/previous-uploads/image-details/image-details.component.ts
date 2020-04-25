@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'image-details',
@@ -14,7 +15,14 @@ import { Component, OnInit, Input } from '@angular/core';
 
 export class ImageDetailsComponent implements OnInit {
   @Input() image;
-  constructor() { }
+
+  constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit() { }
+
+  transform(url) {
+    if (url) {
+      return this.sanitizer.bypassSecurityTrustUrl(url);
+    }
+  }
 }

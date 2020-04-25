@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/internal/Observable';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/x-www-form-urlencoded'
+  })
+};
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +13,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class YmirStorageService {
 
   private __getImages = 'http://localhost:8000/api/images';
-  private __addImage = 'http://localhost:8000/api/add/';
+  private __addImage = 'http://localhost:8000/api/add';
 
   constructor(private httpClient: HttpClient) { }
 
@@ -16,7 +21,11 @@ export class YmirStorageService {
     return this.httpClient.get(this.__getImages);
   }
 
-  // addNewImage(params) {
-  //   return this.httpClient.post(this.__addImage, params);
-  // }
+  addNewImage(params) {
+    let httpParams = new HttpParams();
+    httpParams = httpParams.append('filename', params.filename);
+    httpParams = httpParams.append('path', params.path);
+    httpParams = httpParams.append('data', params.data);
+    return this.httpClient.post(this.__addImage, httpParams, httpOptions);
+  }
 }

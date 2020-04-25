@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { YmirStorageService } from 'src/app/shared/ymir-storage.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export interface apiResponse {
   message: string;
@@ -33,5 +34,4 @@ export class PreviousUploadsComponent implements OnInit {
         }
       });
   }
-
 }

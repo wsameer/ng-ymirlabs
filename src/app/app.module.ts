@@ -7,8 +7,9 @@ import { PreviousUploadsComponent } from './components/previous-uploads/previous
 import { ImageUploadComponent } from './components/image-upload/image-upload.component';
 import { PreviewComponent } from './components/image-upload/preview/preview.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ImageDetailsComponent } from './components/previous-uploads/image-details/image-details.component';
+import { HttpErrorInterceptor } from './shared/http-error.interceptor';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,11 @@ import { ImageDetailsComponent } from './components/previous-uploads/image-detai
     BrowserAnimationsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: HttpErrorInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

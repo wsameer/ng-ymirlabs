@@ -1,11 +1,9 @@
 <div class="card mb-3">
-  <img [src]="selectedFile?.src" class="card-img-top" alt="iadsdnnasnd">
+  <img [src]="transform(selectedFile?.path)" class="card-img-top" alt="iadsdnnasnd">
   <div class="card-body">
-    <h5 class="card-title">{{selectedFile?.file?.name}}</h5>
+    <h5 class="card-title">{{selectedFile?.filename}}</h5>
     <p class="card-text">
-      This is a wider card with supporting text below as a natural lead-in to additional content.
-      This content is a little bit longer.
+      {{ selectedFile?.data }}
     </p>
-    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
   </div>
 </div>
