@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GoogleVisionService } from 'src/app/shared/google-vision.service';
+// import { GoogleVisionService } from 'src/app/shared/google-vision.service';
+import { ImgurService } from 'src/app/shared/imgur.service';
 
 class ImageSnippet {
   pending: boolean = false;
@@ -18,21 +19,12 @@ export class ImageUploadComponent implements OnInit {
   selectedFile: ImageSnippet;
 
   constructor(
-    private googleVisionService: GoogleVisionService
+    private imgurService: ImgurService
   ) { }
 
   ngOnInit() { }
 
-  private onSuccess() {
-    this.selectedFile.pending = false;
-    this.selectedFile.status = 'ok';
-  }
-
-  private onError() {
-    this.selectedFile.pending = false;
-    this.selectedFile.status = 'fail';
-    this.selectedFile.src = '';
-  }
+  private base64textString = '';
 
   onSelectFile(event: any) {
     if (event.target.files && event.target.files[0]) {
@@ -52,16 +44,22 @@ export class ImageUploadComponent implements OnInit {
       }
 
       // read file as data url
-      reader.readAsDataURL(file);
+      // reader.readAsDataURL(file);
+      reader.readAsBinaryString(file);
 
       // called once readAsDataURL is completed
-      reader.onload = (event) => {
-        this.selectedFile = new ImageSnippet(event.target.result, file);
-        console.log(this.selectedFile);
-        
-        // return this.readTextOnImage(event.target.result);
+      reader.onload = (evt: any) => {
+        if (evt.target) {
+          this.selectedFile = new ImageSnippet(evt.target.result, file);
+          this.base64textString = btoa(evt.target.result);
+          console.log(this.selectedFile);
+        }
       }
     }
+  }
+
+  uploadImageToImgur() {
+    this.imgurService.uploadNewImage(this.base64textString).subscribe(response => console.log(response));
   }
 
 

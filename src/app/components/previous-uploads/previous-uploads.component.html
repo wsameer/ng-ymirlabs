@@ -13,9 +13,13 @@
 
     <div class="list-group" *ngIf="previousImages.length">
       <ng-container *ngFor="let image of previousImages">
-        <button type="button" class="list-group-item list-group-item-action">
-          {{ image.name }}
+        <button 
+          type="button" 
+          class="list-group-item list-group-item-action" 
+          (click)="onSelectImage(image.id)">
+          <span>{{ image.filename }}</span>
         </button>
+        <image-details *ngIf="selectedImageId === image.id" [image]="image"></image-details>
       </ng-container>
     </div>
 

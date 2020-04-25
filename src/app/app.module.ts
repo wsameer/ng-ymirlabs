@@ -8,6 +8,7 @@ import { ImageUploadComponent } from './components/image-upload/image-upload.com
 import { PreviewComponent } from './components/image-upload/preview/preview.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ImageDetailsComponent } from './components/previous-uploads/image-details/image-details.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { HttpClientModule } from '@angular/common/http';
     PreviousUploadsComponent,
     ImageUploadComponent,
     PreviewComponent,
-    NavbarComponent
+    NavbarComponent,
+    ImageDetailsComponent
   ],
   imports: [
     BrowserModule,
