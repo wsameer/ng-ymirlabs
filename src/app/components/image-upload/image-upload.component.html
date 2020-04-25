@@ -1,0 +1,27 @@
+<div class="card mb-5">
+  <div class="card-body">
+    <h5 class="card-title">Upload an image</h5>
+    <p class="card-text">Supported formats: png/jpeg/jpg</p>
+
+    <div class="input-group">
+      <div class="custom-file">
+        <input 
+          type="file" 
+          class="custom-file-input" 
+          id="uploadNewImage01" 
+          (change)="onSelectFile($event)"
+          aria-describedby="inputGroupFileAddon04">
+        <label 
+          class="custom-file-label" 
+          for="uploadNewImage01">
+          Choose file
+        </label>
+      </div>
+    </div>
+    <p class="card-text mt-2 mb-1">Note: Max size 5 MB</p>
+
+    <div *ngIf="selectedFile" class="mt-4">
+      <app-preview [selectedFile]="selectedFile"></app-preview>
+    </div>
+  </div>
+</div>

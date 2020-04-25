@@ -1,0 +1,23 @@
+<div class="card">
+  <div class="card-body">
+
+    <button type="button" class="btn btn-primary btn-lg btn-block" (click)="displayPreviousImages()">
+      {{ previousImages.length ? 'Refresh previous images' : 'Display previous images' }}
+    </button>
+
+    <hr />
+
+    <div class="text-center" *ngIf="previousImages.length === 0">
+      <p><em>No data</em></p>
+    </div>
+
+    <div class="list-group" *ngIf="previousImages.length">
+      <ng-container *ngFor="let image of previousImages">
+        <button type="button" class="list-group-item list-group-item-action">
+          {{ image.name }}
+        </button>
+      </ng-container>
+    </div>
+
+  </div>
+</div>
