@@ -4,10 +4,9 @@ import { ImgurService } from 'src/app/shared/imgur.service';
 import { YmirStorageService } from 'src/app/shared/ymir-storage.service';
 
 export interface SelectedFile {
-  filename: string;
-  path: string | ArrayBuffer;
-  size: number;
-  data: string;
+  fileName: string;
+  imageFile: string; // this is the path of the uploaded image
+  textOnImage: string;
 }
 
 @Component({
@@ -16,19 +15,18 @@ export interface SelectedFile {
   styles: [``]
 })
 export class ImageUploadComponent implements OnInit {
-
-  private base64textString: string;
-  selectedFile: SelectedFile;
+  selectedFileData: SelectedFile;
+  selectedFilesTempPath: string | ArrayBuffer;
+  selectedImageFile: File;
 
   constructor(
     private ymirStorageService: YmirStorageService,
     private imgurService: ImgurService
   ) {
-    this.selectedFile = {
-      filename: null,
-      path: null,
-      size: 0,
-      data: null
+    this.selectedFileData = {
+      fileName: null,
+      imageFile: null,
+      textOnImage: null
     };
   }
 
@@ -37,32 +35,30 @@ export class ImageUploadComponent implements OnInit {
   onSelectFile(event: any) {
     if (event.target.files && event.target.files[0]) {
       const reader = new FileReader();
-      const file = event.target.files[0];
-      this.selectedFile.filename = file.name;
-      this.selectedFile.size = file.size;
+      this.selectedImageFile = event.target.files[0];
+      const currentTimeStamp = new Date().getTime();
 
       // check if file size is under limit
-      if (!this.validateFileSize(file.size)) {
+      if (!this.validateFileSize(this.selectedImageFile.size)) {
         console.log('Select a file with size less than 5 MB');
         return false;
       }
 
       //check file is valid
-      if (!this.validateFile(file.type)) {
+      if (!this.validateFile(this.selectedImageFile.type)) {
         console.log('Selected file format is not supported');
         return false;
       }
 
+      this.selectedFileData.fileName = `${currentTimeStamp}_${this.selectedImageFile.name}`;
+      this.selectedFileData.textOnImage = "Some dummy text on the image";
+
       // read file as data url
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(this.selectedImageFile);
 
       // called once readAsDataURL is completed
       reader.onload = (evt: any) => {
-        // here it should be an CDN URL
-        this.selectedFile.path = evt.target.result;
-        this.base64textString = btoa(evt.target.result);
-
-        // this.uploadImageToImgur()
+        this.selectedFilesTempPath = evt.target.result;
         this.addImageEntryToDatabase();
       }
     }
@@ -72,19 +68,17 @@ export class ImageUploadComponent implements OnInit {
    * Adds the entry of the selected file to database
    */
   addImageEntryToDatabase() {
-    const currentTimeStamp = new Date().getTime();
-    const newFileName = `${currentTimeStamp}-${this.selectedFile.filename}`;
     const params = {
-      filename: newFileName,
-      path: this.selectedFile.path,
-      data: 'Lorem Ipsum Dolar Sit Emet Brngas Der Kpels Altraa Bingduss'
+      fileName: this.selectedFileData.fileName,
+      imageFile: this.selectedImageFile,
+      textOnImage: this.selectedFileData.textOnImage
     };
 
     this.ymirStorageService
       .addNewImage(params)
       .subscribe((response: any) => {
         if (response) {
-          this.selectedFile.data = response.data.data;
+          this.selectedFileData.imageFile = response.data.imageFile;
         }
       });
   }
@@ -109,7 +103,7 @@ export class ImageUploadComponent implements OnInit {
    * @param fileSize The size of the uploaded file
    */
   validateFileSize(fileSize: number) {
-    return fileSize < 2000000;
+    return fileSize < (1024 * 1024 * 5);
   }
 
   /**

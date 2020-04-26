@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { UploadedImages } from '../previous-uploads.component';
 
 @Component({
   selector: 'image-details',
@@ -14,15 +14,15 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 
 export class ImageDetailsComponent implements OnInit {
-  @Input() image;
+  @Input() image: Array<UploadedImages>;
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor() { }
 
   ngOnInit() { }
 
   transform(url) {
     if (url) {
-      return this.sanitizer.bypassSecurityTrustUrl(url);
+      return `http://localhost:8000/${url}`;
     }
   }
 }

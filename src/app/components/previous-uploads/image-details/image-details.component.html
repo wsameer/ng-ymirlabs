@@ -1,12 +1,12 @@
 <div class="card mb-3 selected-image-details card">
   <div class="row no-gutters">
     <div class="col-md-4">
-      <img [src]="transform(image.path)" class="card-img-top" alt="image.filename">
+      <img [src]="transform(image.imageFile)" class="card-img-top" alt="image.fileName">
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h5 class="card-title">{{image.filename}}</h5>
-        <p class="card-text">{{ image.data }}</p>
+        <h5 class="card-title">{{image.fileName}}</h5>
+        <p class="card-text">{{ image.textOnImage || 'No text extracted' }}</p>
       </div>
     </div>
   </div>

@@ -17,7 +17,7 @@
           type="button" 
           class="list-group-item list-group-item-action" 
           (click)="onSelectImage(image.id)">
-          <span>{{ image.filename }}</span>
+          <span>{{ image.fileName }}</span>
         </button>
         <image-details *ngIf="selectedImageId === image.id" [image]="image"></image-details>
       </ng-container>

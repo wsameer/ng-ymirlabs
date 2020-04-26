@@ -1,9 +1,9 @@
 <div class="card mb-3">
-  <img [src]="transform(selectedFile?.path)" class="card-img-top" alt="iadsdnnasnd">
+  <img [src]="transform(selectedFileData?.imageFile)" class="card-img-top" alt="selectedFileData.fileName">
   <div class="card-body">
-    <h5 class="card-title">{{selectedFile?.filename}}</h5>
+    <h5 class="card-title">{{selectedFileData?.fileName}}</h5>
     <p class="card-text">
-      {{ selectedFile?.data }}
+      {{ selectedFileData?.textOnImage }}
     </p>
   </div>
 </div>

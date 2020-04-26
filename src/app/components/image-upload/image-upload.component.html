@@ -18,10 +18,10 @@
         </label>
       </div>
     </div>
-    <p class="card-text mt-2 mb-1">Note: Max size 2 MB</p>
+    <p class="card-text mt-2 mb-1">Note: Max size 5 MB</p>
 
-    <div *ngIf="selectedFile.path != null" class="mt-4">
-      <app-preview [selectedFile]="selectedFile"></app-preview>
+    <div *ngIf="selectedFileData.imageFile != null" class="mt-4">
+      <app-preview [selectedFileData]="selectedFileData"></app-preview>
     </div>
   </div>
 </div>

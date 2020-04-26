@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { YmirStorageService } from 'src/app/shared/ymir-storage.service';
-import { DomSanitizer } from '@angular/platform-browser';
 
 export interface apiResponse {
   message: string;
-  data: Array<any>;
+  data: Array<UploadedImages>;
   error?
 };
+
+export interface UploadedImages {
+  fileName: string;
+  id: number;
+  imageFile: string;
+  textOnImage: string;
+}
 
 @Component({
   selector: 'app-previous-uploads',
@@ -15,9 +21,11 @@ export interface apiResponse {
 export class PreviousUploadsComponent implements OnInit {
 
   selectedImageId = null;
-  previousImages = [];
+  previousImages: Array<UploadedImages>;
 
-  constructor(private ymirStorageService: YmirStorageService) { }
+  constructor(private ymirStorageService: YmirStorageService) {
+    this.previousImages = [];
+  }
 
   ngOnInit() { }
 
@@ -26,6 +34,7 @@ export class PreviousUploadsComponent implements OnInit {
   }
 
   displayPreviousImages() {
+    this.selectedImageId = null;
     this.ymirStorageService
       .getPreviousImages()
       .subscribe((response: apiResponse) => {

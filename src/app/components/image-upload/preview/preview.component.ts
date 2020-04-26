@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { SelectedFile } from '../image-upload.component';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-preview',
@@ -8,16 +7,16 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./preview.component.sass']
 })
 export class PreviewComponent implements OnInit {
-  @Input() selectedFile: SelectedFile;
+  @Input() selectedFileData: SelectedFile;
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor() { }
 
   ngOnInit() {
   }
 
   transform(url) {
     if (url) {
-      return this.sanitizer.bypassSecurityTrustUrl(url);
+      return `http://localhost:8000/${url}`;
     }
   }
 }
